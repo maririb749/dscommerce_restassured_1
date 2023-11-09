@@ -22,6 +22,18 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.googlecode.json-simple</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+
+
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -88,7 +100,8 @@
 						<exclude>com/devsuperior/dscommerce/controllers/handlers/**</exclude>
 						<exclude>com/devsuperior/dscommerce/services/exceptions/**</exclude>
 						<exclude>com/devsuperior/dscommerce/util/**</exclude>
-						<exclude>com/devsuperior/dscommerce/controllers/**</exclude>s
+						<exclude>com/devsuperior/dscommerce/controllers/**</exclude>
+						s
 					</excludes>
 				</configuration>
 				<executions>
