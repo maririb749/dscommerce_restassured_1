@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 @SuppressWarnings("unused")
 public class ProductControllerRA {
 	
-	private Long existingProductId;
+	private Long existingProductId, nonExistingProductId;
 	
 	@BeforeEach
 	public void setUp() {
@@ -34,7 +34,20 @@ public class ProductControllerRA {
 		     .body("categories.id",hasItems(2,3))
 		     .body("categories.name",hasItems("Eletrônicos","Computadores"));
 	}
+	@Test
+	public void findByIdShouldReturnNotFoundWhenIdNonExists() {
+		
+		
+		nonExistingProductId = 100L;
+		
+		given()
+		     .get("/products/{id}", nonExistingProductId)
+		   .then()
+		     .statusCode(404);
+     
+	}
 }
+
 	
 	
 
