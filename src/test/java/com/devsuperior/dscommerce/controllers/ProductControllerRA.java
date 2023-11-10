@@ -2,8 +2,11 @@ package com.devsuperior.dscommerce.controllers;
 
 import static io.restassured.RestAssured.*;
 import static io.restassured.matcher.RestAssuredMatchers.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.Matchers.*;
 
+import org.hamcrest.Matcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -42,11 +45,21 @@ public class ProductControllerRA {
 		
 		given()
 		     .get("/products/{id}", nonExistingProductId)
-		   .then()
-		     .statusCode(404);
-     
+		  .then()
+		  .statusCode(404)
+		  .body("error", equalTo("Recurso não encontrado"));
+   
 	}
+	@Test
+	public void findAllShouldReturnPagedProductsWhenProductNameParamIsEmpty() {
+		given()
+			.get("/products?page=0")
+		.then()
+			.body("content.name", hasItems("The Lord of the Rings", "PC Gamer Y"));
+	}
+			
 }
+
 
 	
 	
