@@ -4,6 +4,7 @@ import static io.restassured.RestAssured.*;
 import static io.restassured.matcher.RestAssuredMatchers.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.*;
 
 import org.hamcrest.Matcher;
@@ -16,11 +17,16 @@ public class ProductControllerRA {
 	
 	private Long existingProductId, nonExistingProductId;
 	
+	private String productName;
+	
 	@BeforeEach
 	public void setUp() {
 		baseURI = "http://localhost:8080";
+		 productName = "Macbook";
+	
 		
 	}
+	
 	@Test
 	public void findByIdShouldReturnProductWhenIdExists() {
 		
@@ -57,7 +63,20 @@ public class ProductControllerRA {
 		.then()
 			.body("content.name", hasItems("The Lord of the Rings", "PC Gamer Y"));
 	}
-			
+	
+	@Test
+	public void findAllShouldReturnPagedProductsWhenProductNameParamIsNotEmpty() {
+	   
+	    given()
+	        .get("/products?name={productName}", productName)
+	    .then()
+	        .statusCode(200)
+	        .body("content.id[0]", is(3))
+	        .body("content.name[0]", equalTo("Macbook Pro"))
+	        .body("content.price[0]", is(1250.0f))
+	        .body("content.imgUrl[0]", equalTo("https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/3-big.jpg"));
+	}
+	
 }
 
 
