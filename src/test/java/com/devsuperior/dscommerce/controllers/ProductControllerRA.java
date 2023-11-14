@@ -7,24 +7,70 @@ import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.hamcrest.Matcher;
+import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import com.devsuperior.dscommerce.tests.TokenUtil;
+
+import io.restassured.http.ContentType;
+import net.minidev.json.JSONObject;
 
 
 @SuppressWarnings("unused")
 public class ProductControllerRA {
 	
+	private String clientUsername, clientPassword, adminUsername, adminPassword;
+	
+	private String clientToken, adminToken, invalidToken;
+	
+	
 	private Long existingProductId, nonExistingProductId;
 	
 	private String productName;
 	
+	private Map<String, Object> postProductInstance;
+	
 	@BeforeEach
-	public void setUp() {
+	public void setUp(){
 		baseURI = "http://localhost:8080";
 		 productName = "Macbook";
+		 
+		 clientUsername = "maria@gmail.com";
+		 clientPassword = "123456";
+		 adminUsername = "alex@gmail.com";
+		 adminPassword = "123456";
+		 
+		 clientToken = TokenUtil.obtainAccessToken(clientUsername,clientPassword);
+		 adminToken =  TokenUtil.obtainAccessToken(adminUsername,adminPassword);
+		 invalidToken = adminToken + "xpto";
+		 
+		 postProductInstance = new HashMap<>();
+		 
+		 postProductInstance.put("name", "Meu Produto");
+		 postProductInstance.put("description", "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Qui ad, adipisci illum ipsam velit et odit eaque reprehenderit ex maxime delectus dolore labore, quisquam quae tempora natus esse aliquam veniam doloremque quam minima culpa alias maiores commodi. Perferendis enim");
+		 postProductInstance.put("price", 50.0);
+		 postProductInstance.put("imgUrl", "https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/1-big.jpg");
 	
+		List<Map<String, Object>> categories = new ArrayList<>();
 		
+		Map<String, Object> category1 = new HashMap<>();
+		 category1.put("id",2);
+		 
+		 Map<String, Object> category2 = new HashMap<>();
+		 category2.put("id",3);
+		 
+		 categories.add(category1);
+		 categories.add(category2);
+		 
+		 postProductInstance.put("categories", categories);
+		 
 	}
 	
 	@Test
@@ -83,6 +129,29 @@ public class ProductControllerRA {
 		.then()
 			.body("content.findAll { it.price > 2000 }.name", hasItems("Smart TV", "PC Gamer Weed"));
 	}
+	
+	@Test
+	public void insertShouldReturnProductCreatedWhenAdminLogged() {
+		JSONObject newProduct = new JSONObject(postProductInstance);
+		
+		given()
+	    .header("Content-type", "application/json")
+	    .header("Authorization", "Bearer " + adminToken)
+	    .body(newProduct)
+	    .contentType(ContentType.JSON)
+	    .accept(ContentType.JSON)
+	.when()
+	    .post("/products")
+	.then()
+	    .statusCode(201)
+	    .body("name", equalTo("Meu Produto"))
+	    .body("price", is(50.0F))
+	    .body("imgUrl", equalTo("https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/1-big.jpg"))
+	    .body("categories.id", hasItems(2,3));
+
+		
+	}
+	
 	
 }
 
