@@ -210,6 +210,26 @@ public class ProductControllerRA {
 	    .body("errors.message[0]", equalTo("O preço deve ser positivo"));
 
    }
+	@Test
+	public void insertShouldReturnUnprocessableEntityWhenAdminLoggedAndPriceIsZero() {
+		
+		postProductInstance.put("price", 0.0);
+		
+		JSONObject newProduct = new JSONObject(postProductInstance);
+		
+	given()
+		.header("Content-type", "application/json")
+	    .header("Authorization", "Bearer " + adminToken)
+	    .body(newProduct)
+	    .contentType(ContentType.JSON)
+	    .accept(ContentType.JSON)
+	.when()
+	    .post("/products")
+	.then()
+	    .statusCode(422)
+	    .body("errors.message[0]", equalTo("O preço deve ser positivo"));
+
+   }
 }
 
 
