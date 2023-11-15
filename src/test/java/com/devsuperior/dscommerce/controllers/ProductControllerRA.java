@@ -148,10 +148,28 @@ public class ProductControllerRA {
 	    .body("price", is(50.0F))
 	    .body("imgUrl", equalTo("https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/1-big.jpg"))
 	    .body("categories.id", hasItems(2,3));
-
 		
 	}
-	
+	@Test
+	public void insertShouldReturnUnprocessableEntityWhenAdminLoggedandinvalidName() {
+		
+		postProductInstance.put("name", "ab");
+		
+		JSONObject newProduct = new JSONObject(postProductInstance);
+		
+		given()
+	    .header("Content-type", "application/json")
+	    .header("Authorization", "Bearer " + adminToken)
+	    .body(newProduct)
+	    .contentType(ContentType.JSON)
+	    .accept(ContentType.JSON)
+	.when()
+	    .post("/products")
+	.then()
+	    .statusCode(422)
+	    .body("errors.message[0]", equalTo("Nome precisar ter de 3 a 80 caracteres"));
+		
+	}
 	
 }
 
