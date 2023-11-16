@@ -286,7 +286,7 @@ public class ProductControllerRA {
    }
 	@Test
 	public void deleteShouldReturnNoContentWhenAdminLogged() {
-	  existingProductId = 26L;
+	  existingProductId = 27L;
 		
 	given()
 		.header("Authorization", "Bearer " + adminToken)
@@ -294,6 +294,19 @@ public class ProductControllerRA {
 	    .delete("/products/{id}", existingProductId)
 	.then()
 	    .statusCode(204);
+	
+   }
+	
+	@Test
+	public void deleteShouldReturnNotFoundWhenIdDoesNotExistsAndAdminLogged() {
+	  nonExistingProductId = 100L;
+		
+	given()
+		.header("Authorization", "Bearer " + adminToken)
+	 .when()
+	    .delete("/products/{id}", nonExistingProductId)
+	.then()
+	    .statusCode(404);
 	
    }
 }
