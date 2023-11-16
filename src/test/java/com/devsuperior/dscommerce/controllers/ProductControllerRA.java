@@ -284,6 +284,18 @@ public class ProductControllerRA {
 	    .statusCode(401);
 	
    }
+	@Test
+	public void deleteShouldReturnNoContentWhenAdminLogged() {
+	  existingProductId = 26L;
+		
+	given()
+		.header("Authorization", "Bearer " + adminToken)
+	 .when()
+	    .delete("/products/{id}", existingProductId)
+	.then()
+	    .statusCode(204);
+	
+   }
 }
 
 
