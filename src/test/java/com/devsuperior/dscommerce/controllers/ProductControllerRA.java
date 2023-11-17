@@ -323,6 +323,19 @@ public class ProductControllerRA {
 	    .statusCode(400);
 	
    }
+	
+	@Test
+	public void deleteShouldReturnForbiddenWhenDependentIdAndClientLogged() {
+		dependentProductId = 3L;
+		
+	given()
+		.header("Authorization", "Bearer " + clientToken)
+	 .when()
+	    .delete("/products/{id}", dependentProductId)
+	.then()
+	    .statusCode(403);
+	
+   }
 }
 
 
