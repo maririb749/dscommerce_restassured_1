@@ -6,6 +6,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -308,8 +309,9 @@ public class ProductControllerRA {
 	 .when()
 	    .delete("/products/{id}", nonExistingProductId)
 	.then()
-	    .statusCode(404);
-	
+	    .statusCode(404)
+	    .body("error", equalTo("Recurso não encontrado"))
+	   .body("status",equalTo(404));
    }
 	@Test
 	public void deleteShouldReturnBadRequestWhenDependentIdAndAdminLogged() {
@@ -322,18 +324,31 @@ public class ProductControllerRA {
 	.then()
 	    .statusCode(400);
 	
+	
    }
 	
 	@Test
 	public void deleteShouldReturnForbiddenWhenDependentIdAndClientLogged() {
-		dependentProductId = 3L;
+		existingProductId = 25L;
 		
 	given()
 		.header("Authorization", "Bearer " + clientToken)
 	 .when()
-	    .delete("/products/{id}", dependentProductId)
+	    .delete("/products/{id}", existingProductId)
 	.then()
 	    .statusCode(403);
+	
+   }
+	@Test
+	public void deleteShouldReturnUnauthorizedWhenInvalidToken() {
+		existingProductId = 25L;
+		
+	given()
+		.header("Authorization", "Bearer " + invalidToken)
+	 .when()
+	    .delete("/products/{id}", existingProductId)
+	.then()
+	    .statusCode(401);
 	
    }
 }
