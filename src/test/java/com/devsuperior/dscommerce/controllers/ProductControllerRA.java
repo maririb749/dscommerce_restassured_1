@@ -31,7 +31,7 @@ public class ProductControllerRA {
 	private String clientToken, adminToken, invalidToken;
 	
 	
-	private Long existingProductId, nonExistingProductId;
+	private Long existingProductId, nonExistingProductId, dependentProductId;
 	
 	private String productName;
 	
@@ -284,9 +284,10 @@ public class ProductControllerRA {
 	    .statusCode(401);
 	
    }
+	
 	@Test
 	public void deleteShouldReturnNoContentWhenAdminLogged() {
-	  existingProductId = 27L;
+	  existingProductId = 25L;
 		
 	given()
 		.header("Authorization", "Bearer " + adminToken)
@@ -296,6 +297,7 @@ public class ProductControllerRA {
 	    .statusCode(204);
 	
    }
+   
 	
 	@Test
 	public void deleteShouldReturnNotFoundWhenIdDoesNotExistsAndAdminLogged() {
@@ -307,6 +309,18 @@ public class ProductControllerRA {
 	    .delete("/products/{id}", nonExistingProductId)
 	.then()
 	    .statusCode(404);
+	
+   }
+	@Test
+	public void deleteShouldReturnBadRequestWhenDependentIdAndAdminLogged() {
+		dependentProductId = 3L;
+		
+	given()
+		.header("Authorization", "Bearer " + adminToken)
+	 .when()
+	    .delete("/products/{id}", dependentProductId)
+	.then()
+	    .statusCode(400);
 	
    }
 }
