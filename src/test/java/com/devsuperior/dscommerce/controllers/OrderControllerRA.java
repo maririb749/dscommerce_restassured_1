@@ -4,6 +4,7 @@ import static io.restassured.RestAssured.*;
 import static io.restassured.matcher.RestAssuredMatchers.*;
 import static org.hamcrest.Matchers.*;
 
+import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -74,6 +75,20 @@ public class OrderControllerRA {
 	     .body("items[0].imgUrl",equalTo("https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/1-big.jpg"))
 	     .body("total",is(90.5F));
 	}
+	@Test
+	public void findByIdShouldReturnForbiddenWhenIdExistsAndClientLoggedAndOrderDoesNotBelongUser()  {
+		Long otherOrderId = 2L;
+		
+		given()
+			.header("Content-type", "application/json")
+			.header("Authorization", "Bearer " + clientToken)
+			.accept(ContentType.JSON)
+		.when()
+			.get("/orders/{id}", otherOrderId)
+		.then()
+			.statusCode(403);
+	}
+
 
 
 }
