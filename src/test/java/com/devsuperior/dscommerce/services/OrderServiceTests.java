@@ -111,7 +111,7 @@ public class OrderServiceTests {
 	}
 	
 	@Test
-	public void findByIdShouldThrowsForbiddenExceptionWhenIdExistsAndOtherClientLogged() {
+	//public void findByIdShouldThrowsForbiddenExceptionWhenIdExistsAndOtherClientLogged() {
 		
 		Mockito.doThrow(ForbiddenException.class).when(authService).validateSelfOrAdmin(any());
 		

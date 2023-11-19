@@ -1,10 +1,10 @@
 package com.devsuperior.dscommerce.controllers;
 
-import static io.restassured.RestAssured.*;
-import static io.restassured.matcher.RestAssuredMatchers.*;
-import static org.hamcrest.Matchers.*;
+import static io.restassured.RestAssured.baseURI;
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
-import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +17,7 @@ public class OrderControllerRA {
 	private String adminUsename, adminPassword, clientUsername, clientPassword;
 	private String adminToken, clientToken;
 	
-	private Long existingOrderId;
+	private Long existingOrderId, nonExistingOrderId;
 	
 	
 	@BeforeEach
@@ -28,7 +28,9 @@ public class OrderControllerRA {
 		adminPassword = "123456";
 		clientUsername = "maria@gmail.com";
 		clientPassword = "123456";
+		
 		existingOrderId = 1L;
+		nonExistingOrderId = 100L;
 		
 		adminToken = TokenUtil.obtainAccessToken(adminUsename, adminPassword);
 		clientToken = TokenUtil.obtainAccessToken(clientUsername, clientPassword);
@@ -87,6 +89,18 @@ public class OrderControllerRA {
 			.get("/orders/{id}", otherOrderId)
 		.then()
 			.statusCode(403);
+	}
+	@Test
+	public void findByIdShouldReturnNotFoundWhenIdDontExistsAndAdminLogged()  {
+		
+		given()
+			.header("Content-type", "application/json")
+			.header("Authorization", "Bearer " + adminToken)
+			.accept(ContentType.JSON)
+		.when()
+			.get("/orders/{id}", nonExistingOrderId)
+		.then()
+			.statusCode(404);
 	}
 
 
