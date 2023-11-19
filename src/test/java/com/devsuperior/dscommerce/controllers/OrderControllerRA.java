@@ -15,7 +15,7 @@ import io.restassured.http.ContentType;
 public class OrderControllerRA {
 	
 	private String adminUsename, adminPassword, clientUsername, clientPassword;
-	private String adminToken, clientToken;
+	private String adminToken, clientToken, invalidToken;
 	
 	private Long existingOrderId, nonExistingOrderId;
 	
@@ -34,6 +34,7 @@ public class OrderControllerRA {
 		
 		adminToken = TokenUtil.obtainAccessToken(adminUsename, adminPassword);
 		clientToken = TokenUtil.obtainAccessToken(clientUsername, clientPassword);
+		invalidToken = adminToken + "xpto";
 	}
 
 	@Test
@@ -114,6 +115,20 @@ public class OrderControllerRA {
 		.then()
 			.statusCode(404);
 	}
+	
+	@Test
+	public void findByIdShouldReturnUnauthorizedWhenTokenInvalid()  {
+		
+		given()
+			.header("Content-type", "application/json")
+			.header("Authorization", "Bearer " + invalidToken)
+			.accept(ContentType.JSON)
+		.when()
+			.get("/orders/{id}", existingOrderId)
+		.then()
+			.statusCode(401);
+	}
+
 
 
 
