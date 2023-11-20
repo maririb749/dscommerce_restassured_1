@@ -421,6 +421,26 @@ public class ProductControllerRA {
 		    .body("status", equalTo(422));
 			
    }
+	@Test
+	public void updateShouldReturnUnprocessableEntityWhenIdExistsAndAdminLoggedAndPriceIsNegative(){
+		putProductInstance.put("price", -200.0);
+		JSONObject product = new JSONObject(putProductInstance);
+		existingProductId = 10L;
+		
+		given()
+			.header("Content-type", "application/json")
+			.header("Authorization", "Bearer " + adminToken)
+			.contentType(ContentType.JSON)
+			.accept(ContentType.JSON)
+			.body(product)
+		.when()
+		    .put("/products/{id}", existingProductId)
+		.then()
+			.statusCode(422)
+		    .body("errors.message[0]", equalTo("O preço deve ser positivo"))
+		    .body("status", equalTo(422));
+			
+   }
 		
 }
 	
