@@ -441,6 +441,26 @@ public class ProductControllerRA {
 		    .body("status", equalTo(422));
 			
    }
+	@Test
+	public void updateShouldReturnUnprocessableEntityWhenIdExistsAndAdminLoggedAndPriceIsZero(){
+		putProductInstance.put("price", 0.0);
+		JSONObject product = new JSONObject(putProductInstance);
+		existingProductId = 10L;
+		
+		given()
+			.header("Content-type", "application/json")
+			.header("Authorization", "Bearer " + adminToken)
+			.contentType(ContentType.JSON)
+			.accept(ContentType.JSON)
+			.body(product)
+		.when()
+		    .put("/products/{id}", existingProductId)
+		.then()
+			.statusCode(422)
+		    .body("status", equalTo(422));
+			
+   }
+	
 		
 }
 	
