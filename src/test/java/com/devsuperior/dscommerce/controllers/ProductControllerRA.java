@@ -38,6 +38,8 @@ public class ProductControllerRA {
 	
 	private Map<String, Object> postProductInstance;
 	
+	private Map<String, Object> putProductInstance;
+	
 	@BeforeEach
 	public void setUp(){
 		baseURI = "http://localhost:8080";
@@ -52,12 +54,19 @@ public class ProductControllerRA {
 		 adminToken =  TokenUtil.obtainAccessToken(adminUsername,adminPassword);
 		 invalidToken = adminToken + "xpto";
 		 
-		 postProductInstance = new HashMap<>();
+		
 		 
+		 postProductInstance = new HashMap<>();
 		 postProductInstance.put("name", "Meu Produto");
 		 postProductInstance.put("description", "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Qui ad, adipisci illum ipsam velit et odit eaque reprehenderit ex maxime delectus dolore labore, quisquam quae tempora natus esse aliquam veniam doloremque quam minima culpa alias maiores commodi. Perferendis enim");
 		 postProductInstance.put("price", 50.0);
 		 postProductInstance.put("imgUrl", "https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/1-big.jpg");
+		 
+		  putProductInstance = new HashMap<>();
+		  putProductInstance.put("name", "Produto atualizado");
+		  putProductInstance.put("description", "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Qui ad, adipisci illum ipsam velit et odit eaque reprehenderit ex maxime delectus dolore labore, quisquam quae tempora natus esse aliquam veniam doloremque quam minima culpa alias maiores commodi. Perferendis enim");
+		  putProductInstance.put("imgUrl", "https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/1-big.jpg");
+		  putProductInstance.put("price", 200.0);
 	
 		List<Map<String, Object>> categories = new ArrayList<>();
 		
@@ -71,6 +80,7 @@ public class ProductControllerRA {
 		 categories.add(category2);
 		 
 		 postProductInstance.put("categories", categories);
+		 putProductInstance.put("categories", categories);
 		 
 	}
 	
@@ -351,7 +361,31 @@ public class ProductControllerRA {
 	    .statusCode(401);
 	
    }
+	@Test
+	public void updateShouldReturnProductWhenWhenIdExistsAndAdminLogged(){
+		JSONObject product = new JSONObject(putProductInstance);
+		existingProductId = 10L;
+		
+		given()
+			.header("Content-type", "application/json")
+			.header("Authorization", "Bearer " + adminToken)
+			.contentType(ContentType.JSON)
+			.accept(ContentType.JSON)
+			.body(product)
+		.when()
+			.put("/products/{id}", existingProductId)
+		.then()
+			.statusCode(200)
+			.body("name", equalTo("Produto atualizado"))
+			.body("price", is(200.0f))
+			.body("imgUrl", equalTo("https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/1-big.jpg"))
+			.body("categories.id", hasItems(2, 3))
+			.body("categories.name", hasItems("Eletrônicos", "Computadores"));
+   }
+		
 }
+	
+
 
 
 	
