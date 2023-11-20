@@ -401,6 +401,26 @@ public class ProductControllerRA {
 		    .body("status", equalTo(404));
 			
    }
+	@Test
+	public void updateShouldReturnUnprocessableEntityWhenIdExistsAndAdminLoggedAndInvalidName(){
+		putProductInstance.put("name", "ab");
+		JSONObject product = new JSONObject(putProductInstance);
+		existingProductId = 10L;
+		
+		given()
+			.header("Content-type", "application/json")
+			.header("Authorization", "Bearer " + adminToken)
+			.contentType(ContentType.JSON)
+			.accept(ContentType.JSON)
+			.body(product)
+		.when()
+		    .put("/products/{id}", existingProductId)
+		.then()
+			.statusCode(422)
+		    .body("errors.message[0]", equalTo("Nome precisar ter de 3 a 80 caracteres"))
+		    .body("status", equalTo(422));
+			
+   }
 		
 }
 	
