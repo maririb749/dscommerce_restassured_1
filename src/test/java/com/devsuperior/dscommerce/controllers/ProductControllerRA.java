@@ -382,6 +382,25 @@ public class ProductControllerRA {
 			.body("categories.id", hasItems(2, 3))
 			.body("categories.name", hasItems("Eletrônicos", "Computadores"));
    }
+	@Test
+	public void updateShouldReturnNotFoundWhenWhenIdNonExistsAndAdminLogged(){
+		JSONObject product = new JSONObject(putProductInstance);
+		nonExistingProductId = 100L;
+		
+		given()
+			.header("Content-type", "application/json")
+			.header("Authorization", "Bearer " + adminToken)
+			.contentType(ContentType.JSON)
+			.accept(ContentType.JSON)
+			.body(product)
+		.when()
+			.put("/products/{id}", nonExistingProductId)
+		.then()
+			.statusCode(404)
+		    .body("error", equalTo("Recurso não encontrado"))
+		    .body("status", equalTo(404));
+			
+   }
 		
 }
 	
