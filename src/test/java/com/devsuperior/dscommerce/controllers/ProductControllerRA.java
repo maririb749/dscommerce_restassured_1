@@ -478,6 +478,23 @@ public class ProductControllerRA {
 		    .put("/products/{id}", existingProductId)
 		.then()
 			.statusCode(422);
+			
+   }
+	@Test
+	public void updateShouldReturnForbiddenWhenIdExistsAndClientLogged(){
+		JSONObject product = new JSONObject(putProductInstance);
+		existingProductId = 10L;
+		
+		given()
+			.header("Content-type", "application/json")
+			.header("Authorization", "Bearer " + clientToken)
+			.contentType(ContentType.JSON)
+			.accept(ContentType.JSON)
+			.body(product)
+		.when()
+		    .put("/products/{id}", existingProductId)
+		.then()
+			.statusCode(403);
 		    
 			
    }
