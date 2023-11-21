@@ -498,6 +498,24 @@ public class ProductControllerRA {
 		    
 			
    }
+	@Test
+	public void updateShouldReturnUnauthorizedWhenIdExistsAndInvalidToken(){
+		JSONObject product = new JSONObject(putProductInstance);
+		existingProductId = 10L;
+		
+		given()
+			.header("Content-type", "application/json")
+			.header("Authorization", "Bearer " + invalidToken)
+			.contentType(ContentType.JSON)
+			.accept(ContentType.JSON)
+			.body(product)
+		.when()
+		    .put("/products/{id}", existingProductId)
+		.then()
+			.statusCode(401);
+		    
+			
+   }
 	
 		
 }
