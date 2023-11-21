@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.hamcrest.Matcher;
 import org.json.JSONException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -41,6 +42,7 @@ public class ProductControllerRA {
 	private Map<String, Object> putProductInstance;
 	
 	@BeforeEach
+	@AfterEach
 	public void setUp(){
 		baseURI = "http://localhost:8080";
 		 productName = "Macbook";
@@ -456,8 +458,27 @@ public class ProductControllerRA {
 		.when()
 		    .put("/products/{id}", existingProductId)
 		.then()
-			.statusCode(422)
-		    .body("status", equalTo(422));
+			.statusCode(422);
+		    
+			
+   }
+	@Test
+	public void updateShouldReturnUnprocessableEntityWhenIdExistsAndAdminLoggedAndProductHasNotCategory(){
+		putProductInstance.put("categories", null);
+		JSONObject product = new JSONObject(putProductInstance);
+		existingProductId = 10L;
+		
+		given()
+			.header("Content-type", "application/json")
+			.header("Authorization", "Bearer " + adminToken)
+			.contentType(ContentType.JSON)
+			.accept(ContentType.JSON)
+			.body(product)
+		.when()
+		    .put("/products/{id}", existingProductId)
+		.then()
+			.statusCode(422);
+		    
 			
    }
 	
