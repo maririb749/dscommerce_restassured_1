@@ -17,7 +17,7 @@ public class UserControllerRA {
 	
 	private String adminUsername, adminPassowd, clientUsername, clientPassword;
 	
-	private String adminToken, clientToken;
+	private String adminToken, clientToken, invalidToken;
 	
 	
 	@BeforeEach
@@ -31,6 +31,7 @@ public class UserControllerRA {
 		
 		adminToken = TokenUtil.obtainAccessToken(adminUsername, adminPassowd);
 		clientToken = TokenUtil.obtainAccessToken(clientUsername, clientPassword);
+		invalidToken = adminToken + "xpto";
 	}
 	
 	@Test
@@ -67,6 +68,18 @@ public class UserControllerRA {
 		.body("birthDate", equalTo("2001-07-25"))
 		.body("roles", hasItems("ROLE_CLIENT"));
   }
+	@Test
+	public void getMeShouldReturnUnauthorizedWhenInvalidToken() {
+		given()
+		.header("Content-type", "application/json")
+		.header("Authorization", "Bearer " + invalidToken)
+		.accept(ContentType.JSON)
+	.when()
+		.get("/users/me")
+	.then()
+		.statusCode(401);
+		
+	}
 		
 		
 }
